@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Salt para las papas</title>
+</head>
+<body>
+
+    <h2>Cloruro de sodio > SALT                         Miguel Angel Garcia Rodriguez - 22060003</h2>
+
+    <input type="text" id="password">
+
+    <button onclick="generarsalt()">Inicia SALT</button>
+
+    <p><strong>Salt:</strong></p>
+    <p id="salt"></p>
+
+    <script>
+        async function generarsalt() {
+
+            const password = document.getElementById("password").value;
+
+            if (password === "") {
+                alert("Escribe una contraseña");
+                return;
+            }
+
+            const saltBytes = crypto.getRandomValues(
+                new Uint8Array(16)
+            );
+
+            const salt = Array.from(saltBytes)
+                .map(b => b.toString(16).padStart(2, "0"))
+                .join("");
+
+            const datos = password + salt;
+
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(datos);
+
+            const resultado = await crypto.subtle.digest(
+                "SHA-256", bytes
+            );
+
+            const hash = Array.from(new Uint8Array(resultado))
+                .map(b => b.toString(16).padStart(2, "0"))
+                .join("");
+
+            document.getElementById("salt").textContent = salt;
+        }
+    </script>
+
+</body>
+</html>
